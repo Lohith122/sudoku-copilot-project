@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sudoku</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <main class="sudoku-wrapper">
+    <header class="sudoku-header">
+      <h1>Sudoku</h1>
+      <div class="controls">
+        <span id="timer">00:00</span>
+        <input id="playerName" placeholder="Your name" maxlength="20" />
+        <button id="checkBtn">Check</button>
+        <button id="hintBtn">Hint</button>
+        <button id="themeToggle" aria-pressed="false">Dark</button>
+      </div>
+      <div id="winBanner" class="win-banner" style="display:none">Congratulations! You solved the puzzle.</div>
+    </header>
+
+    <section id="sudoku" class="sudoku" aria-label="9 by 9 Sudoku grid"></section>
+    <aside id="scoreboard" class="scoreboard">
+      <h2>Top 10</h2>
+      <ol id="topScores"></ol>
+    </aside>
+  </main>
+
+  <script>
+    (function(){
+      // Build the grid as 3x3 blocks, each block is a 3x3 mini-grid.
+      const container = document.getElementById('sudoku');
+      for(let block=0; block<9; block++){
+        const blockEl = document.createElement('div');
+        blockEl.className = 'block';
+
+        for(let cell=0; cell<9; cell++){
+          const cellWrapper = document.createElement('div');
+          cellWrapper.className = 'cell';
+
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.inputMode = 'numeric';
+          input.maxLength = 1;
+          input.autocomplete = 'off';
+          input.pattern = '[1-9]';
+
+          // compute row/col in 0-based coordinates
+          const blockRow = Math.floor(block / 3);
+          const blockCol = block % 3;
+          const cellRowInBlock = Math.floor(cell / 3);
+          const cellColInBlock = cell % 3;
+          const row = blockRow * 3 + cellRowInBlock;
+          const col = blockCol * 3 + cellColInBlock;
+
+          input.dataset.row = row;
+          input.dataset.col = col;
+          input.tabIndex = row * 9 + col + 1;
+
+          // Allow only digits 1-9 and keep single char
+          input.addEventListener('input', (e)=>{
+            e.target.value = e.target.value.replace(/[^1-9]/g,'').slice(0,1);
+          });
+
+          cellWrapper.appendChild(input);
+          blockEl.appendChild(cellWrapper);
+        }
+
+        container.appendChild(blockEl);
+      }
+
+      // Theme toggle button element exists; the script in /static/js/game.js will attach behavior.
+    })();
+  </script>
+  <script src="/static/js/game.js" defer></script>
+</body>
+</html>

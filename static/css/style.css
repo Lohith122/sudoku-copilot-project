@@ -1,0 +1,139 @@
+:root{
+  --bg: #f7f9fc;
+  --page-padding: 18px;
+  --cell-bg: #ffffff;
+  --cell-bg-alt: #eef4fb;
+  --text: #0b1220;
+  --muted: #5b6b7a;
+  --accent: #2b6cff;
+  --border: rgba(11,18,32,0.08);
+  --input-border: rgba(11,18,32,0.12);
+  --focus-shadow: rgba(43,108,255,0.14);
+}
+
+[data-theme='dark']{
+  --bg: #071019;
+  --cell-bg: #08131b;
+  --cell-bg-alt: #0b1a24;
+  --text: #e6f0fb;
+  --muted: #9fb3d2;
+  --accent: #6ea8ff;
+  --border: rgba(255,255,255,0.04);
+  --input-border: rgba(255,255,255,0.06);
+  --focus-shadow: rgba(110,168,255,0.12);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+.sudoku-wrapper{
+  max-width:880px;
+  margin:clamp(18px,6vw,48px) auto;
+  padding:var(--page-padding);
+}
+
+.sudoku-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sudoku-header h1{font-size:clamp(1.1rem,2.4vw,1.6rem);margin:0}
+.sudoku-header button{background:transparent;border:1px solid var(--input-border);color:var(--text);padding:6px 10px;border-radius:8px;cursor:pointer}
+
+/* Outer grid: 3x3 blocks */
+.sudoku{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  width:100%;
+  /* Keep the whole grid roughly square while remaining responsive */
+  max-width:100%;
+}
+
+.block{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  padding:6px;
+  border-radius:10px;
+  border:2px solid var(--border);
+  transition:background 120ms ease, border-color 120ms ease;
+}
+
+/* Alternate 3x3 sub-grids */
+.block:nth-child(odd){
+  background:var(--cell-bg);
+}
+.block:nth-child(even){
+  background:var(--cell-bg-alt);
+}
+
+.cell{width:100%;}
+
+.cell input{
+  width:100%;
+  aspect-ratio:1/1;
+  box-sizing:border-box;
+  -webkit-appearance:none;
+  appearance:none;
+  background:transparent;
+  border:1px solid var(--input-border);
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  font-size:clamp(0.9rem,3.2vw,1.25rem);
+  color:var(--text);
+  padding:0;
+  transition:transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.cell input::placeholder{color:var(--muted);opacity:0.7}
+
+.cell input:focus{
+  outline:none;
+  transform:scale(1.02);
+  box-shadow:0 6px 18px var(--focus-shadow);
+}
+
+.cell input.given{
+  font-weight:800;
+  background:linear-gradient(0deg, rgba(0,0,0,0.02), rgba(0,0,0,0));
+}
+
+/* Larger borders to visually separate 3x3 groups */
+.sudoku{border-radius:12px}
+.sudoku > .block{box-shadow:0 1px 0 rgba(0,0,0,0.02) inset}
+
+/* Ensure touch targets are comfortable on mobile */
+@media (max-width:520px){
+  .sudoku-wrapper{padding:12px}
+  .block{gap:4px;padding:4px}
+  .cell input{border-radius:6px}
+}
+
+/* When the container is narrow, reduce gaps so cells stay usable */
+@media (max-width:360px){
+  .sudoku{gap:6px}
+  .block{gap:3px}
+  .cell input{font-size:clamp(0.85rem,4.2vw,1.1rem)}
+}
+
+/* Add subtle focus-visible for keyboard users */
+.cell input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.cell-error input{border-color:#e74c3c;background:rgba(231,76,60,0.06)}
+.cell-hint input{border-color:#27ae60;background:rgba(39,174,96,0.06)}
+
+.win-banner{margin-top:8px;padding:8px 12px;background:linear-gradient(90deg,#2ecc71,#27ae60);color:#072014;border-radius:8px;font-weight:700}
+
+.scoreboard{margin-top:16px;border-top:1px dashed var(--border);padding-top:12px}
+.scoreboard h2{margin:0 0 8px 0;font-size:1rem}
+.scoreboard ol{padding-left:18px;margin:0}
+.controls{display:flex;align-items:center;gap:8px}
+.controls #timer{font-weight:700}
