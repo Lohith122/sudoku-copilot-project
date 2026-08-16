@@ -1,9 +1,7 @@
 from flask import Flask, render_template, jsonify, request
-import copy
 
 app = Flask(__name__)
 
-# Baseline puzzle & solution
 SAMPLE_PUZZLE = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
     [6, 0, 0, 1, 9, 5, 0, 0, 0],

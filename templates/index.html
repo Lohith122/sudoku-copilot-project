@@ -3,44 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Sudoku Game</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Sudoku Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Sudoku</h1>
-            <div class="header-controls">
-                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">🌓 Theme</button>
-            </div>
+    <div class="app-container">
+        <!-- Top Header Banner -->
+        <header class="top-banner">
+            <h1>Sudoku Game</h1>
+            <button id="theme-toggle" class="theme-circle-btn" aria-label="Toggle Theme">☀️</button>
         </header>
 
-        <div class="status-bar">
-            <span>Time: <span id="timer" class="timer">00:00</span></span>
-            <label for="difficulty" style="display:none;">Difficulty</label>
-            <select id="difficulty">
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-            </select>
+        <!-- Main Game Row (3 Columns) -->
+        <div class="game-layout">
+            <!-- Left Card: Difficulty & New Game -->
+            <aside class="panel-card difficulty-panel">
+                <label for="difficulty" class="panel-label">DIFFICULTY</label>
+                <select id="difficulty" class="styled-select">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+                <button id="new-game-btn" class="pill-btn">New Game</button>
+            </aside>
+
+            <!-- Center Card: Sudoku Board & Timer -->
+            <main class="panel-card board-panel">
+                <div id="sudoku-grid" class="sudoku-grid" role="grid" aria-label="Sudoku Grid"></div>
+                <div class="timer-tag">Time: <span id="timer">0:00</span></div>
+            </main>
+
+            <!-- Right Card: Action Buttons -->
+            <aside class="panel-card actions-panel">
+                <button id="check-btn" class="pill-btn">Check</button>
+                <button id="hint-btn" class="pill-btn">Hint</button>
+                <button id="note-btn" class="pill-btn">Note Mode: <span id="note-status">Off</span></button>
+                <button id="solver-btn" class="pill-btn">Visual Solver</button>
+            </aside>
         </div>
 
-        <div id="win-banner" class="win-banner"></div>
-
-        <div id="sudoku-grid" class="sudoku-grid" role="grid" aria-label="Sudoku Grid"></div>
-
-        <div class="controls-panel">
-            <button id="new-game-btn" class="primary-btn">New Game</button>
-            <button id="check-btn">Check</button>
-            <button id="hint-btn">Hint</button>
-        </div>
-
-        <section class="leaderboard">
-            <h2>Top 10 Leaderboard</h2>
-            <ul id="scores-list" class="scores-list"></ul>
+        <!-- Bottom Card: Top 10 Fastest Times Table -->
+        <section class="panel-card leaderboard-panel">
+            <h2>Top 10 Fastest Times:</h2>
+            <div class="table-container">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Time</th>
+                            <th>Level</th>
+                            <th>Hints</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scores-tbody">
+                        <!-- Scores rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
         </section>
     </div>
 
-    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/game.js') }}?v=4"></script>
 </body>
 </html>
