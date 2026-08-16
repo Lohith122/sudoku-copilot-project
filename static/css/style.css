@@ -1,139 +1,260 @@
-:root{
-  --bg: #f7f9fc;
-  --page-padding: 18px;
-  --cell-bg: #ffffff;
-  --cell-bg-alt: #eef4fb;
-  --text: #0b1220;
-  --muted: #5b6b7a;
-  --accent: #2b6cff;
-  --border: rgba(11,18,32,0.08);
-  --input-border: rgba(11,18,32,0.12);
-  --focus-shadow: rgba(43,108,255,0.14);
+:root {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --border-color: #cbd5e1;
+    --grid-border: #334155;
+    --cell-bg: #ffffff;
+    --cell-alt: #f1f5f9;
+    --cell-locked: #e2e8f0;
+    --cell-error: #fee2e2;
+    --error-border: #ef4444;
+    --cell-hint: #dcfce7;
+    --hint-border: #22c55e;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
-[data-theme='dark']{
-  --bg: #071019;
-  --cell-bg: #08131b;
-  --cell-bg-alt: #0b1a24;
-  --text: #e6f0fb;
-  --muted: #9fb3d2;
-  --accent: #6ea8ff;
-  --border: rgba(255,255,255,0.04);
-  --input-border: rgba(255,255,255,0.06);
-  --focus-shadow: rgba(110,168,255,0.12);
+[data-theme="dark"] {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary: #3b82f6;
+    --primary-hover: #60a5fa;
+    --border-color: #334155;
+    --grid-border: #94a3b8;
+    --cell-bg: #1e293b;
+    --cell-alt: #334155;
+    --cell-locked: #0f172a;
+    --cell-error: #7f1d1d;
+    --error-border: #f87171;
+    --cell-hint: #064e3b;
+    --hint-border: #4ade80;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-  background:var(--bg);
-  color:var(--text);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.sudoku-wrapper{
-  max-width:880px;
-  margin:clamp(18px,6vw,48px) auto;
-  padding:var(--page-padding);
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1.5rem 1rem;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-.sudoku-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.sudoku-header h1{font-size:clamp(1.1rem,2.4vw,1.6rem);margin:0}
-.sudoku-header button{background:transparent;border:1px solid var(--input-border);color:var(--text);padding:6px 10px;border-radius:8px;cursor:pointer}
-
-/* Outer grid: 3x3 blocks */
-.sudoku{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  width:100%;
-  /* Keep the whole grid roughly square while remaining responsive */
-  max-width:100%;
+.container {
+    background-color: var(--card-bg);
+    padding: clamp(1rem, 3vw, 2rem);
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    max-width: 540px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
 }
 
-.block{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:6px;
-  padding:6px;
-  border-radius:10px;
-  border:2px solid var(--border);
-  transition:background 120ms ease, border-color 120ms ease;
+/* Header & Controls */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Alternate 3x3 sub-grids */
-.block:nth-child(odd){
-  background:var(--cell-bg);
-}
-.block:nth-child(even){
-  background:var(--cell-bg-alt);
+h1 {
+    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+    font-weight: 700;
+    color: var(--text-main);
 }
 
-.cell{width:100%;}
-
-.cell input{
-  width:100%;
-  aspect-ratio:1/1;
-  box-sizing:border-box;
-  -webkit-appearance:none;
-  appearance:none;
-  background:transparent;
-  border:1px solid var(--input-border);
-  border-radius:6px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:600;
-  font-size:clamp(0.9rem,3.2vw,1.25rem);
-  color:var(--text);
-  padding:0;
-  transition:transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+.header-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 
-.cell input::placeholder{color:var(--muted);opacity:0.7}
-
-.cell input:focus{
-  outline:none;
-  transform:scale(1.02);
-  box-shadow:0 6px 18px var(--focus-shadow);
+.theme-toggle-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.4rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
 }
 
-.cell input.given{
-  font-weight:800;
-  background:linear-gradient(0deg, rgba(0,0,0,0.02), rgba(0,0,0,0));
+/* Status & Bar */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 0.25rem 0;
 }
 
-/* Larger borders to visually separate 3x3 groups */
-.sudoku{border-radius:12px}
-.sudoku > .block{box-shadow:0 1px 0 rgba(0,0,0,0.02) inset}
-
-/* Ensure touch targets are comfortable on mobile */
-@media (max-width:520px){
-  .sudoku-wrapper{padding:12px}
-  .block{gap:4px;padding:4px}
-  .cell input{border-radius:6px}
+.timer {
+    font-variant-numeric: tabular-nums;
+    font-size: 1.1rem;
+    color: var(--primary);
 }
 
-/* When the container is narrow, reduce gaps so cells stay usable */
-@media (max-width:360px){
-  .sudoku{gap:6px}
-  .block{gap:3px}
-  .cell input{font-size:clamp(0.85rem,4.2vw,1.1rem)}
+/* Action Controls */
+.controls-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
 }
 
-/* Add subtle focus-visible for keyboard users */
-.cell input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+select, button {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
 
-.cell-error input{border-color:#e74c3c;background:rgba(231,76,60,0.06)}
-.cell-hint input{border-color:#27ae60;background:rgba(39,174,96,0.06)}
+button.primary-btn {
+    background-color: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+}
 
-.win-banner{margin-top:8px;padding:8px 12px;background:linear-gradient(90deg,#2ecc71,#27ae60);color:#072014;border-radius:8px;font-weight:700}
+button.primary-btn:hover {
+    background-color: var(--primary-hover);
+}
 
-.scoreboard{margin-top:16px;border-top:1px dashed var(--border);padding-top:12px}
-.scoreboard h2{margin:0 0 8px 0;font-size:1rem}
-.scoreboard ol{padding-left:18px;margin:0}
-.controls{display:flex;align-items:center;gap:8px}
-.controls #timer{font-weight:700}
+/* Sudoku 9x9 Grid */
+.sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 2.5px solid var(--grid-border);
+    border-radius: 0.35rem;
+    overflow: hidden;
+    background-color: var(--grid-border);
+    gap: 1px;
+}
+
+.cell {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: clamp(1.1rem, 3.5vw, 1.45rem);
+    font-weight: 600;
+    border: none;
+    outline: none;
+    background-color: var(--cell-bg);
+    color: var(--text-main);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Alternating 3x3 Subgrid background */
+.cell.cell-alt {
+    background-color: var(--cell-alt);
+}
+
+.cell:focus {
+    background-color: #e0e7ff;
+    color: #1e1b4b;
+}
+
+[data-theme="dark"] .cell:focus {
+    background-color: #3730a3;
+    color: #ffffff;
+}
+
+.cell.cell-locked {
+    background-color: var(--cell-locked);
+    font-weight: 800;
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+/* 3x3 Subgrid borders */
+.cell[data-col="2"], .cell[data-col="5"] {
+    border-right: 2px solid var(--grid-border);
+}
+.cell[data-row="2"], .cell[data-row="5"] {
+    border-bottom: 2px solid var(--grid-border);
+}
+
+/* Visual Feedback Classes */
+.cell.cell-error {
+    background-color: var(--cell-error) !important;
+    color: #dc2626 !important;
+    border: 1.5px solid var(--error-border);
+}
+
+.cell.cell-hint {
+    background-color: var(--cell-hint) !important;
+    color: #16a34a !important;
+    border: 1.5px solid var(--hint-border);
+}
+
+/* Leaderboard */
+.leaderboard {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+}
+
+.leaderboard h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.scores-list {
+    list-style: none;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.scores-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.25rem;
+    background-color: var(--cell-alt);
+}
+
+/* Win Banner */
+.win-banner {
+    display: none;
+    background-color: var(--cell-hint);
+    color: #166534;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 1px solid var(--hint-border);
+}
+
+@media (max-width: 480px) {
+    .controls-panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}

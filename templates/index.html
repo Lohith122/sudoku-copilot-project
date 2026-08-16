@@ -1,78 +1,46 @@
-<!doctype html>
-<html lang="en" data-theme="light">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sudoku</title>
-  <link rel="stylesheet" href="/static/css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Sudoku Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <main class="sudoku-wrapper">
-    <header class="sudoku-header">
-      <h1>Sudoku</h1>
-      <div class="controls">
-        <span id="timer">00:00</span>
-        <input id="playerName" placeholder="Your name" maxlength="20" />
-        <button id="checkBtn">Check</button>
-        <button id="hintBtn">Hint</button>
-        <button id="themeToggle" aria-pressed="false">Dark</button>
-      </div>
-      <div id="winBanner" class="win-banner" style="display:none">Congratulations! You solved the puzzle.</div>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Sudoku</h1>
+            <div class="header-controls">
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">🌓 Theme</button>
+            </div>
+        </header>
 
-    <section id="sudoku" class="sudoku" aria-label="9 by 9 Sudoku grid"></section>
-    <aside id="scoreboard" class="scoreboard">
-      <h2>Top 10</h2>
-      <ol id="topScores"></ol>
-    </aside>
-  </main>
+        <div class="status-bar">
+            <span>Time: <span id="timer" class="timer">00:00</span></span>
+            <label for="difficulty" style="display:none;">Difficulty</label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
 
-  <script>
-    (function(){
-      // Build the grid as 3x3 blocks, each block is a 3x3 mini-grid.
-      const container = document.getElementById('sudoku');
-      for(let block=0; block<9; block++){
-        const blockEl = document.createElement('div');
-        blockEl.className = 'block';
+        <div id="win-banner" class="win-banner"></div>
 
-        for(let cell=0; cell<9; cell++){
-          const cellWrapper = document.createElement('div');
-          cellWrapper.className = 'cell';
+        <div id="sudoku-grid" class="sudoku-grid" role="grid" aria-label="Sudoku Grid"></div>
 
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.inputMode = 'numeric';
-          input.maxLength = 1;
-          input.autocomplete = 'off';
-          input.pattern = '[1-9]';
+        <div class="controls-panel">
+            <button id="new-game-btn" class="primary-btn">New Game</button>
+            <button id="check-btn">Check</button>
+            <button id="hint-btn">Hint</button>
+        </div>
 
-          // compute row/col in 0-based coordinates
-          const blockRow = Math.floor(block / 3);
-          const blockCol = block % 3;
-          const cellRowInBlock = Math.floor(cell / 3);
-          const cellColInBlock = cell % 3;
-          const row = blockRow * 3 + cellRowInBlock;
-          const col = blockCol * 3 + cellColInBlock;
+        <section class="leaderboard">
+            <h2>Top 10 Leaderboard</h2>
+            <ul id="scores-list" class="scores-list"></ul>
+        </section>
+    </div>
 
-          input.dataset.row = row;
-          input.dataset.col = col;
-          input.tabIndex = row * 9 + col + 1;
-
-          // Allow only digits 1-9 and keep single char
-          input.addEventListener('input', (e)=>{
-            e.target.value = e.target.value.replace(/[^1-9]/g,'').slice(0,1);
-          });
-
-          cellWrapper.appendChild(input);
-          blockEl.appendChild(cellWrapper);
-        }
-
-        container.appendChild(blockEl);
-      }
-
-      // Theme toggle button element exists; the script in /static/js/game.js will attach behavior.
-    })();
-  </script>
-  <script src="/static/js/game.js" defer></script>
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
 </body>
 </html>
