@@ -4,6 +4,30 @@ let currentSolution = [];
 let initialPuzzle = [];
 let currentDifficulty = "easy";
 
+const DEFAULT_PUZZLE = [
+    [5, 3, 0, 0, 7, 0, 0, 0, 0],
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],
+    [0, 0, 0, 0, 8, 0, 0, 7, 9]
+];
+
+const DEFAULT_SOLUTION = [
+    [5, 3, 4, 6, 7, 8, 9, 1, 2],
+    [6, 7, 2, 1, 9, 5, 3, 4, 8],
+    [1, 9, 8, 3, 4, 2, 5, 6, 7],
+    [8, 5, 9, 7, 6, 1, 4, 2, 3],
+    [4, 2, 6, 8, 5, 3, 7, 9, 1],
+    [7, 1, 3, 9, 2, 4, 8, 5, 6],
+    [9, 6, 1, 5, 3, 7, 2, 8, 4],
+    [2, 8, 7, 4, 1, 9, 6, 3, 5],
+    [3, 4, 5, 2, 8, 6, 1, 7, 9]
+];
+
 class ScoreManager {
     static getScores(difficulty) {
         const scores = localStorage.getItem(`sudoku_top10_${difficulty}`);
@@ -25,7 +49,7 @@ class ScoreManager {
         const scores = this.getScores(difficulty);
         list.innerHTML = scores.length === 0 
             ? "<li>No high scores recorded yet.</li>"
-            : scores.map((s, idx) => `<li><span>#${idx + 1}${s.name}</span> <span>${formatTime(s.time)} (${s.date})</span></li>`).join("");
+            : scores.map((s, idx) => `<li><span>#${idx + 1} ${s.name}</span> <span>${formatTime(s.time)} (${s.date})</span></li>`).join("");
     }
 }
 
@@ -54,14 +78,22 @@ async function startNewGame() {
     const banner = document.getElementById("win-banner");
     if (banner) banner.style.display = "none";
 
-    currentDifficulty = document.getElementById("difficulty") ? document.getElementById("difficulty").value : "easy";
-    const res = await fetch(`/api/new-game?difficulty=${currentDifficulty}`);
-    const data = await res.json();
+    const diffSelect = document.getElementById("difficulty");
+    currentDifficulty = diffSelect ? diffSelect.value : "easy";
     
-    initialPuzzle = data.puzzle;
-    currentSolution = data.solution;
-    
-    renderBoard(data.puzzle);
+    try {
+        const res = await fetch(`/api/new-game?difficulty=${currentDifficulty}`);
+        if (!res.ok) throw new Error("API route not found");
+        const data = await res.json();
+        
+        initialPuzzle = data.puzzle;
+        currentSolution = data.solution;
+    } catch (err) {
+        initialPuzzle = DEFAULT_PUZZLE;
+        currentSolution = DEFAULT_SOLUTION;
+    }
+
+    renderBoard(initialPuzzle);
     ScoreManager.renderScores(currentDifficulty);
     startTimer();
 }
@@ -80,7 +112,6 @@ function renderBoard(board) {
             input.dataset.col = c;
             input.classList.add("cell");
             
-            // Subgrid styling (alternating 3x3 blocks)
             const boxRow = Math.floor(r / 3);
             const boxCol = Math.floor(c / 3);
             if ((boxRow + boxCol) % 2 === 1) {
@@ -99,7 +130,6 @@ function renderBoard(board) {
     }
 }
 
-// Live invalid move feedback
 function handleCellInput(e, r, c) {
     const input = e.target;
     const val = input.value.trim();
@@ -111,9 +141,7 @@ function handleCellInput(e, r, c) {
     }
 
     const num = parseInt(val);
-
-    // Instant validation check against the solution board
-    if (currentSolution.length > 0 && num !== currentSolution[r][c]) {
+    if (currentSolution && currentSolution.length > 0 && num !== currentSolution[r][c]) {
         input.classList.add("cell-error");
     } else {
         input.classList.remove("cell-error");
@@ -122,7 +150,6 @@ function handleCellInput(e, r, c) {
     checkWinCondition();
 }
 
-// Comprehensive check button functionality
 function checkCurrentBoard() {
     const inputs = document.querySelectorAll("#sudoku-grid input");
     let hasErrors = false;
@@ -186,7 +213,7 @@ function checkWinCondition() {
             banner.style.display = "block";
         }
         setTimeout(() => {
-            const name = prompt(`Great job! You solved it in ${formatTime(secondsElapsed)}!\nEnter your name for the Top 10 Leaderboard:`);
+            const name = prompt(`Great job! Solved in ${formatTime(secondsElapsed)}!\nEnter name for Leaderboard:`);
             if (name) {
                 ScoreManager.saveScore(name.trim() || "Player", secondsElapsed, currentDifficulty);
             }
@@ -215,11 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (checkBtn) checkBtn.addEventListener("click", checkCurrentBoard);
     if (hintBtn) hintBtn.addEventListener("click", getHint);
     if (themeBtn) themeBtn.addEventListener("click", toggleTheme);
-    if (diffSelect) {
-        diffSelect.addEventListener("change", (e) => {
-            ScoreManager.renderScores(e.target.value);
-        });
-    }
+    if (diffSelect) diffSelect.addEventListener("change", startNewGame);
 
     startNewGame();
 });
